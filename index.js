@@ -1,38 +1,20 @@
-const express = require('express');
+const express = require("express");
+const { resolve } = require('path')
+require("dotenv").config()
+const app = express()
 
+//bode.socket Server.
+const server = require("http").createServer(app);
 
-const path = require('path');
-const app = express();
-require('dotenv').config();
+module.exports.io = require("socket.io")(server)
 
-//para el puerto
-const server = require('http').createServer(app);
+require("./sockets/socket.js");
+const { PORT } = process.env
 
-module.exports.io = require('socket.io')(server);
-require('./sockets/socket.js')
-//App de express
-
-//path publico direcciona a ese path
-
-
-
-
-//Node server 
-
-
-
-
-
-const publicPath = path.resolve(__dirname, 'public')
-//para hacer uso de ese path
+const publicPath = resolve(__dirname, "public");
 app.use(express.static(publicPath));
+server.listen(PORT, (err, res) => {
+    if (err) throw new Error(err)
 
-server.listen(process.env.PORT, (err) => {
-    if (err) {
-        throw new Error(err);
-    }
-
-    else {
-        console.log('Servidor correindo ', process.env.PORT);
-    }
-});
+    console.log("Servidor corriendo en puerto :", PORT)
+})
